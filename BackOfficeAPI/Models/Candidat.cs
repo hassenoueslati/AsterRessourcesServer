@@ -1,0 +1,25 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BackOfficeAPI.Models
+{
+    public enum Proffesion
+    {
+        Menuisier = 0,
+        ChefCuisine = 1,
+        Machiniste = 2,
+        JournalierDeProduction = 3,
+        CommisEntrepôt = 4,
+        EtalagisteDécorateur = 5
+    }
+    public class Candidat : User
+    {
+        [Required]
+        public int Telephone { get; set; }
+        public string? Image { get; set; }
+        [Required]
+        public List<Proffesion> Proffesions { get; set; }
+
+        public virtual List<Condidature>? Condidatures { get; set; }
+
+    }
+}
