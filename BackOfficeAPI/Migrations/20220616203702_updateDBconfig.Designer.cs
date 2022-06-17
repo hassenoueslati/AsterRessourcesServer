@@ -3,6 +3,7 @@ using System;
 using BackOfficeAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BackOfficeAPI.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20220616203702_updateDBconfig")]
+    partial class updateDBconfig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,7 +38,7 @@ namespace BackOfficeAPI.Migrations
                     b.Property<int>("Etat")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("PartinenceProfil")
+                    b.Property<int>("PartinenceProfil")
                         .HasColumnType("integer");
 
                     b.Property<bool?>("ProfileInteressant")

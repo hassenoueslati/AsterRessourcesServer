@@ -15,14 +15,14 @@ namespace BackOfficeAPI.Models
     public class Condidature
     {
         public EtatCondidature Etat { get; set; } = EtatCondidature.Actif;
-        public int PartinenceProfil { get; set; } = 0;
+        public int? PartinenceProfil { get; set; } = 0;
         public DateTime DateCondidature { get; set; } = DateTime.Now;
         public Boolean? ProfileInteressant { get; set; }
 
-        public virtual Candidat Candidat { get; set; }
+        public virtual Candidat? Candidat { get; set; }
         [ForeignKey("Candidat")]
         public int CandidatFK { get; set; }
-        public virtual Offre Offre { get; set; }
+        public virtual Offre? Offre { get; set; }
         [ForeignKey("Offre")]
         public int OffreFK { get; set; }
 
