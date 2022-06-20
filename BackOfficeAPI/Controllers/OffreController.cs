@@ -41,7 +41,6 @@ namespace BackOfficeAPI.Controllers
         }
 
         // PUT: api/Offres/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateOffre(int id, Offre Offre)
         {
@@ -72,7 +71,6 @@ namespace BackOfficeAPI.Controllers
         }
 
         // POST: api/Offres
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Offre>> AddOffre(Offre Offre)
         {

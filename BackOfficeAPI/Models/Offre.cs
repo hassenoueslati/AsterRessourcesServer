@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace BackOfficeAPI.Models
 {
@@ -27,6 +28,8 @@ namespace BackOfficeAPI.Models
         
         [ForeignKey("Admin")]
         public int AdminFK { get; set; }
+
+        [JsonIgnore]
         public virtual List<Condidature>? Condidatures { get; set; }
     }
 }
