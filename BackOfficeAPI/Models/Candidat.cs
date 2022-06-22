@@ -15,12 +15,13 @@ namespace BackOfficeAPI.Models
     public class Candidat : User
     {
         
-        public int Telephone { get; set; }
+        public int? Telephone { get; set; }
         public string? Image { get; set; }
         
-        public List<Proffesion> Proffesions { get; set; }
+        public List<Proffesion>? Proffesions { get; set; }
         [JsonIgnore]
         public virtual List<Condidature>? Condidatures { get; set; }
+        
 
     }
 }
