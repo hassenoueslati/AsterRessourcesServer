@@ -12,22 +12,23 @@ namespace BackOfficeAPI.Models
     };
     public class Offre
     {
-        public int OffreId { get; set; }
+        [Key]
+        public string? OffreId { get; set; }
         
-        public string Title { get; set; }
+        public string? Title { get; set; }
         
-        public string Description { get; set; }
+        public string? Description { get; set; }
         
-        public string Adresse { get; set; }
+        public string? Adresse { get; set; }
         
-        public EtatOffre Etat { get; set; } = EtatOffre.Ouverte;
+        public EtatOffre? Etat { get; set; } = EtatOffre.Ouverte;
         
-        public List<Proffesion> Proffesions { get; set; }
+        public List<Proffesion>? Proffesions { get; set; }
 
         public virtual Admin? Admin { get; set; }
         
         [ForeignKey("Admin")]
-        public int AdminFK { get; set; }
+        public string? AdminFK { get; set; }
 
         [JsonIgnore]
         public virtual List<Condidature>? Condidatures { get; set; }

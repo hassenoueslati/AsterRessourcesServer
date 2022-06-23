@@ -21,10 +21,10 @@ namespace BackOfficeAPI.Models
 
         public virtual Candidat? Candidat { get; set; }
         [ForeignKey("Candidat")]
-        public int CandidatFK { get; set; }
+        public string? CandidatFK { get; set; }
         public virtual Offre? Offre { get; set; }
         [ForeignKey("Offre")]
-        public int OffreFK { get; set; }
+        public string? OffreFK { get; set; }
 
     }
 }
