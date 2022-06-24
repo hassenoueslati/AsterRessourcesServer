@@ -1,9 +1,15 @@
 ﻿using BackOfficeAPI.Data;
 using BackOfficeAPI.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace BackOfficeAPI.Controllers
 {
@@ -24,7 +30,9 @@ namespace BackOfficeAPI.Controllers
             _configuration = configuration;
         }
 
+
         // GET: api/Users
+        [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
@@ -75,16 +83,6 @@ namespace BackOfficeAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Users
-        [HttpPost]
-        public async Task<ActionResult<User>> AddUser(User User)
-        {
-            _context.Users.Add(User);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetUser", new { id = User.UserId }, User);
-        }
-
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
@@ -105,8 +103,41 @@ namespace BackOfficeAPI.Controllers
         {
             return _context.Users.Any(e => e.UserId == id);
         }
+        [HttpPost]
+        [Route("login")]
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
+        {
+            var user = await userManager.FindByNameAsync(model.Email);
+            if (user != null && await userManager.CheckPasswordAsync(user, model.Password))
+            {
 
+                var authClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.Email),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                };
 
+                var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+
+                var token = new JwtSecurityToken(
+                    issuer: _configuration["JWT:ValidIssuer"],
+                    audience: _configuration["JWT:ValidAudience"],
+                    expires: DateTime.Now.AddHours(10),
+                    claims: authClaims,
+                    signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+                    );
+
+                return Ok(new
+                {
+                    token = new JwtSecurityTokenHandler().WriteToken(token),
+                    expiration = token.ValidTo
+                });
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError, 
+                new Response { Status = "Error", Message = "Invalid Email or Password" });
+
+        }
+        
         [HttpPost]
         [Route("register-super-admin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
@@ -118,27 +149,20 @@ namespace BackOfficeAPI.Controllers
             User user = new User()
             {
                 Email = model.Email,
+                UserName = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
                 Nom = model.Nom,
-                Prenom = model.Prenom
+                Prenom = model.Prenom,
+                Role = Role.SuperAdmin
+                
             };
             var result = await userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
 
-            if (!await roleManager.RoleExistsAsync(UserRoles.SuperAdmin))
-                await roleManager.CreateAsync(new IdentityRole(UserRoles.SuperAdmin));
-            if (!await roleManager.RoleExistsAsync(UserRoles.Admin))
-                await roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
-            if (!await roleManager.RoleExistsAsync(UserRoles.User))
-                await roleManager.CreateAsync(new IdentityRole(UserRoles.User));
-
-            if (await roleManager.RoleExistsAsync(UserRoles.SuperAdmin))
-            {
-                await userManager.AddToRoleAsync(user, UserRoles.SuperAdmin);
-            }
-
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
     }
+
+   
 }

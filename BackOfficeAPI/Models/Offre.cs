@@ -13,7 +13,7 @@ namespace BackOfficeAPI.Models
     public class Offre
     {
         [Key]
-        public string? OffreId { get; set; }
+        public int? OffreId { get; set; }
         
         public string? Title { get; set; }
         
@@ -28,7 +28,7 @@ namespace BackOfficeAPI.Models
         public virtual Admin? Admin { get; set; }
         
         [ForeignKey("Admin")]
-        public string? AdminFK { get; set; }
+        public int? AdminFK { get; set; }
 
         [JsonIgnore]
         public virtual List<Condidature>? Condidatures { get; set; }

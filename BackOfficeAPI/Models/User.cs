@@ -11,7 +11,8 @@ namespace BackOfficeAPI.Models
     };
     public class User : IdentityUser
     {
-        
+        [Key]
+        public int UserId { get; set; }
         public string? Nom { get; set; }
         
         public string? Prenom { get; set; }

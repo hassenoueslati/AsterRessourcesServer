@@ -26,7 +26,7 @@ namespace BackOfficeAPI.Controllers
 
         // GET: api/Candidats/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Candidat>> GetCandidat(string id)
+        public async Task<ActionResult<Candidat>> GetCandidat(int id)
         {
             var Candidat = await _context.Candidats.FindAsync(id);
 
