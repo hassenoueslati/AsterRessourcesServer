@@ -11,6 +11,18 @@ namespace BackOfficeAPI.Models
     };
     public class User : IdentityUser
     {
+        public User()
+        {
+        }
+
+        public User(string? nom, string? prenom, string? email, Role role)
+        {
+            Nom = nom;
+            Prenom = prenom;
+            Email = email;
+            Role = role;
+        }
+
         [Key]
         public int UserId { get; set; }
         public string? Nom { get; set; }
@@ -23,6 +35,5 @@ namespace BackOfficeAPI.Models
         [DataType(DataType.Password)]
         public string? Password { get; set; }
         public Role Role { get; set; } = Role.Admin;
-
     }
 }

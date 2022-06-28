@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Linq;
 
 namespace BackOfficeAPI.Controllers
 {
@@ -31,16 +32,17 @@ namespace BackOfficeAPI.Controllers
         }
 
 
-        // GET: api/Users
-        [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
+        // GET: api/User/GetAllUser
+
         [HttpGet]
+        [Route("GetAllUser")]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             return await _context.Users.ToListAsync();
         }
 
-        // GET: api/Users/5
-        [HttpGet("{id}")]
+        // GET: api/User/GetUser/5
+        [HttpGet("GetUser/{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
             var User = await _context.Users.FindAsync(id);
@@ -53,8 +55,8 @@ namespace BackOfficeAPI.Controllers
             return User;
         }
 
-        // PUT: api/Users/5
-        [HttpPut("{id}")]
+        // PUT: api/User/UpdateUser/5
+        [HttpPut("UpdateUser/{id}")]
         public async Task<IActionResult> UpdateUser(int id, User User)
         {
             if (id != User.UserId)
@@ -83,8 +85,8 @@ namespace BackOfficeAPI.Controllers
             return NoContent();
         }
 
-        // DELETE: api/Users/5
-        [HttpDelete("{id}")]
+        // DELETE: api/User/DeleteUser/5
+        [HttpDelete("DeleteUser/{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             var User = await _context.Users.FindAsync(id);
@@ -126,21 +128,27 @@ namespace BackOfficeAPI.Controllers
                     claims: authClaims,
                     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                     );
-
+                var userDetail = new RegisterModel { Nom = user.Nom, Prenom = user.Prenom, Email = user.Email, Role= user.Role.ToString() };
                 return Ok(new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
-                    expiration = token.ValidTo
-                });
+                    expiration = token.ValidTo,
+                    Status = new Response().Status = "Success",
+                    Message = new Response().Message = "",
+                    DataSet = new Response().DataSet = userDetail
+                }
+                    ) ;
             }
-            return StatusCode(StatusCodes.Status500InternalServerError, 
-                new Response { Status = "Error", Message = "Invalid Email or Password" });
+            //return StatusCode(StatusCodes.Status500InternalServerError, 
+            //    new Response { Status = "Error", Message = "Invalid Email or Password" });
+            return Unauthorized(
+               new Response { Status = "Error", Message = "Invalid Email or Password" });
 
         }
         
         [HttpPost]
         [Route("register-super-admin")]
-        public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
+        public async Task<IActionResult> RegisterSuperAdmin([FromBody] RegisterModel model)
         {
             var userExists = await userManager.FindByNameAsync(model.Email);
             if (userExists != null)
@@ -159,8 +167,35 @@ namespace BackOfficeAPI.Controllers
             var result = await userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+            var userDetail = new RegisterModel { Nom = user.Nom, Prenom = user.Prenom, Email = user.Email, Role = user.Role.ToString() };
 
-            return Ok(new Response { Status = "Success", Message = "User created successfully!" });
+            return Ok(new Response { Status = "Success", Message = "User created successfully!",DataSet= userDetail });
+        }
+
+        [HttpPost]
+        [Route("register-admin")]
+        public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
+        {
+            var userExists = await userManager.FindByNameAsync(model.Email);
+            if (userExists != null)
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
+
+            User user = new User()
+            {
+                Email = model.Email,
+                UserName = model.Email,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                Nom = model.Nom,
+                Prenom = model.Prenom,
+                Role = Role.Admin
+
+            };
+            var result = await userManager.CreateAsync(user, model.Password);
+            if (!result.Succeeded)
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+            var userDetail = new RegisterModel { Nom = user.Nom, Prenom = user.Prenom, Email = user.Email, Role = user.Role.ToString() };
+
+            return Ok(new Response { Status = "Success", Message = "User created successfully!", DataSet = userDetail });
         }
     }
 
