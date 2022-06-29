@@ -33,12 +33,44 @@ namespace BackOfficeAPI.Controllers
 
 
         // GET: api/User/GetAllUser
-
-        [HttpGet]
-        [Route("GetAllUser")]
+        //[Authorize(Roles = "SuperAdmin")]
+        [HttpGet("GetAllUser")]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             return await _context.Users.ToListAsync();
+        }
+
+        //[Authorize(Roles = "SuperAdmin")]
+        [HttpGet("GetAllAdmin")]
+        public async Task<ActionResult<IEnumerable<User>>> GetAdmins()
+        {
+            List<User> AllAdmin = new List<User>();
+            var users =  _context.Users.ToList();
+            foreach (var user in users) {
+                if (user.Role == Role.Admin)
+                {
+                    AllAdmin.Add(user);
+                }
+            }
+
+            return AllAdmin;
+        }
+
+        //[Authorize(Roles = "SuperAdmin")]
+        [HttpGet("GetAllCandidat")]
+        public async Task<ActionResult<IEnumerable<User>>> GetAllCandidat()
+        {
+            List<User> AllCandidat = new List<User>();
+            var users = _context.Users.ToList();
+            foreach (var user in users)
+            {
+                if (user.Role == Role.Condidat)
+                {
+                    AllCandidat.Add(user);
+                }
+            }
+
+            return AllCandidat;
         }
 
         // GET: api/User/GetUser/5
@@ -116,6 +148,7 @@ namespace BackOfficeAPI.Controllers
                 var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.Email),
+                    new Claim(ClaimTypes.Role,user.Role.ToString()),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 };
 
