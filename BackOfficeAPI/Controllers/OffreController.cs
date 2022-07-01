@@ -19,15 +19,171 @@ namespace BackOfficeAPI.Controllers
             this._context = context;
         }
 
-        // GET: api/Offres
-        [HttpGet]
+        // GET: api/Offre/GetAllOffre
+        [HttpGet("GetAllOffre")]
         public async Task<ActionResult<IEnumerable<Offre>>> GetOffres()
         {
             return await _context.Offres.ToListAsync();
         }
 
-        // GET: api/Offres/5
-        [HttpGet("{id}")]
+        // GET: api/Offre/GetAllOffreOuverte
+        [HttpGet("GetAllOffreOuverte")]
+        public async Task<ActionResult<IEnumerable<Offre>>> GetAllOffreOuverte()
+        {
+            List<Offre> AllOffreOuverte = new List<Offre>();
+            var offres = _context.Offres.ToList();
+            foreach (var offre in offres)
+            {
+                if (offre.Etat == EtatOffre.Ouverte)
+                {
+                    AllOffreOuverte.Add(offre);
+                }
+            }
+
+            return AllOffreOuverte;
+        }
+
+        // GET: api/Offre/GetAllOffreSuspendu
+        [HttpGet("GetAllOffreSuspendu")]
+        public async Task<ActionResult<IEnumerable<Offre>>> GetAllOffreSuspendu()
+        {
+            List<Offre> AllOffreSuspendu = new List<Offre>();
+            var offres = _context.Offres.ToList();
+            foreach (var offre in offres)
+            {
+                if (offre.Etat == EtatOffre.Suspendu)
+                {
+                    AllOffreSuspendu.Add(offre);
+                }
+            }
+
+            return AllOffreSuspendu;
+        }
+
+        // GET: api/Offre/GetAllOffreFermer
+        [HttpGet("GetAllOffreFermer")]
+        public async Task<ActionResult<IEnumerable<Offre>>> GetAllOffreFermer()
+        {
+            List<Offre> AllOffreFermer = new List<Offre>();
+            var offres = _context.Offres.ToList();
+            foreach (var offre in offres)
+            {
+                if (offre.Etat == EtatOffre.Fermé)
+                {
+                    AllOffreFermer.Add(offre);
+                }
+            }
+
+            return AllOffreFermer;
+        }
+
+        // GET: api/Offre/GetAllOffreMenuisier
+        [HttpGet("GetAllOffreMenuisier")]
+        public async Task<ActionResult<IEnumerable<Offre>>> GetAllOffreMenuisier()
+        {
+            List<Offre> AllOffreMenuisier = new List<Offre>();
+            var offres = _context.Offres.ToList();
+            foreach (var offre in offres)
+            {
+                if (offre.Proffesions.Contains(Proffesion.Menuisier))
+                {
+                    AllOffreMenuisier.Add(offre);
+                }
+            }
+
+            return AllOffreMenuisier;
+        }
+
+        // GET: api/Offre/GetAllOffreChefCuisine
+        [HttpGet("GetAllOffreChefCuisine")]
+        public async Task<ActionResult<IEnumerable<Offre>>> GetAllOffreChefCuisine()
+        {
+            List<Offre> AllOffreChefCuisine = new List<Offre>();
+            var offres = _context.Offres.ToList();
+            foreach (var offre in offres)
+            {
+                if (offre.Proffesions.Contains(Proffesion.ChefCuisine))
+                {
+                    AllOffreChefCuisine.Add(offre);
+                }
+            }
+
+            return AllOffreChefCuisine;
+        }
+
+        // GET: api/Offre/GetAllOffreMachiniste
+        [HttpGet("GetAllOffreMachiniste")]
+        public async Task<ActionResult<IEnumerable<Offre>>> GetAllOffreMachiniste()
+        {
+            List<Offre> AllOffreMachiniste = new List<Offre>();
+            var offres = _context.Offres.ToList();
+            foreach (var offre in offres)
+            {
+                if (offre.Proffesions.Contains(Proffesion.Machiniste))
+                {
+                    AllOffreMachiniste.Add(offre);
+                }
+            }
+
+            return AllOffreMachiniste;
+        }
+
+        // GET: api/Offre/GetAllOffreJournalierDeProduction
+        [HttpGet("GetAllOffreJournalierDeProduction")]
+        public async Task<ActionResult<IEnumerable<Offre>>> GetAllOffreJournalierDeProduction()
+        {
+            List<Offre> AllOffreJournalierDeProduction = new List<Offre>();
+            var offres = _context.Offres.ToList();
+            foreach (var offre in offres)
+            {
+                if (offre.Proffesions.Contains(Proffesion.JournalierDeProduction))
+                {
+                    AllOffreJournalierDeProduction.Add(offre);
+                }
+            }
+
+            return AllOffreJournalierDeProduction;
+        }
+
+        // GET: api/Offre/GetAllOffreCommisEntrepot
+        [HttpGet("GetAllOffreCommisEntrepot")]
+        public async Task<ActionResult<IEnumerable<Offre>>> GetAllOffreCommisEntrepot()
+        {
+            List<Offre> AllOffreCommisEntrepot = new List<Offre>();
+            var offres = _context.Offres.ToList();
+            foreach (var offre in offres)
+            {
+                if (offre.Proffesions.Contains(Proffesion.CommisEntrepôt))
+                {
+                    AllOffreCommisEntrepot.Add(offre);
+                }
+            }
+
+            return AllOffreCommisEntrepot;
+        }
+
+        // GET: api/Offre/GetAllOffreEtalagisteDecorateur
+        [HttpGet("GetAllOffreEtalagisteDecorateur")]
+        public async Task<ActionResult<IEnumerable<Offre>>> GetAllOffreEtalagisteDecorateur()
+        {
+            List<Offre> AllOffreEtalagisteDecorateur = new List<Offre>();
+            var offres = _context.Offres.ToList();
+            foreach (var offre in offres)
+            {
+                if (offre.Proffesions.Contains(Proffesion.EtalagisteDécorateur))
+                {
+                    AllOffreEtalagisteDecorateur.Add(offre);
+                }
+            }
+
+            return AllOffreEtalagisteDecorateur;
+        }
+
+
+
+
+        // GET: api/Offre/GetOffre/5
+        [HttpGet("GetOffre/{id}")]
         public async Task<ActionResult<Offre>> GetOffre(int id)
         {
             var Offre = await _context.Offres.FindAsync(id);
@@ -40,8 +196,8 @@ namespace BackOfficeAPI.Controllers
             return Offre;
         }
 
-        // PUT: api/Offres/5
-        [HttpPut("{id}")]
+        // PUT: api/Offre/UpdateOffre/5
+        [HttpPut("UpdateOffre/{id}")]
         public async Task<IActionResult> UpdateOffre(int id, Offre Offre)
         {
             if (id != Offre.OffreId)
@@ -70,8 +226,8 @@ namespace BackOfficeAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Offres
-        [HttpPost]
+        // POST: api/Offre/AddOffre
+        [HttpPost("AddOffre")]
         public async Task<ActionResult<Offre>> AddOffre(Offre Offre)
         {
             _context.Offres.Add(Offre);
@@ -80,8 +236,8 @@ namespace BackOfficeAPI.Controllers
             return CreatedAtAction("GetOffre", new { id = Offre.OffreId }, Offre);
         }
 
-        // DELETE: api/Offres/5
-        [HttpDelete("{id}")]
+        // DELETE: api/Offre/DeleteOffre/5
+        [HttpDelete("DeleteOffre/{id}")]
         public async Task<IActionResult> DeleteOffre(int id)
         {
             var Offre = await _context.Offres.FindAsync(id);
