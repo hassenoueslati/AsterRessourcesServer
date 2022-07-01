@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace BackOfficeAPI.Models
 {
@@ -14,9 +15,9 @@ namespace BackOfficeAPI.Models
     };
     public class Condidature
     {
-        public EtatCondidature Etat { get; set; } = EtatCondidature.Actif;
+        public EtatCondidature? Etat { get; set; } = EtatCondidature.Actif;
         public int? PartinenceProfil { get; set; } = 0;
-        public DateTime DateCondidature { get; set; } = DateTime.Now;
+        public DateTime? DateCondidature { get; set; } = DateTime.Now;
         public Boolean? ProfileInteressant { get; set; }
 
         public virtual Candidat? Candidat { get; set; }

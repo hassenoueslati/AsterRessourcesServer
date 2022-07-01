@@ -15,7 +15,8 @@ namespace BackOfficeAPI.Controllers
 
         public CondidatureController(Context context)
         {
-            this._context = context;
+            _context = context;
+
         }
 
         // GET: api/Condidature/GetAllCondidature
@@ -143,69 +144,33 @@ namespace BackOfficeAPI.Controllers
         }
 
 
-        //// PUT: api/Condidatures/5
-        //[HttpPut("{id1}/{id2}")]
-        //public async Task<IActionResult> UpdateCondidature(int id1, int id2, Condidature Condidature)
-        //{
-        //    if ((id1 != Condidature.OffreFK) && (id2 != Condidature.CandidatFK))
-        //    {
-        //        return BadRequest();
-        //    }
+        // PUT: api/Condidature/UpdateCondidature/5/5
+        [HttpPut("UpdateCondidature/{idOffre}/{idCandidat}")]
+        public async Task<IActionResult> UpdateCondidature(int idOffre, int idCandidat, Condidature Condidature)
+        {
+            if ((idOffre != Condidature.OffreFK) && (idCandidat != Condidature.CandidatFK))
+            {
+                return BadRequest();
+            }
 
-        //    _context.Entry(Condidature).State = EntityState.Modified;
+            _context.Entry(Condidature).State = EntityState.Modified;
 
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!CondidatureExists(id1, id2))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
+           
+                await _context.SaveChangesAsync();
 
-        //    return NoContent();
-        //}
+            return new JsonResult("Condidature Updated successfully !");
+        }
 
-        // POST: api/Condidatures
-        [HttpPost]
+        // POST: api/Condidature/AddCondidature
+        [HttpPost("AddCondidature")]
         public async Task<ActionResult<Condidature>> AddCondidature(Condidature Condidature)
         {
             _context.Condidatures.Add(Condidature);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCondidature", 
-                                    new { id = (Condidature.OffreFK, Condidature.CandidatFK) }
-                                    , Condidature
-                                    );
+            return new JsonResult("Condidature Added successfully !");
         }
 
-        //// POST: api/Condidatures
-        //[HttpPost]
-        //public async Task<ActionResult<Candidat>> AddCondidature(Condidature Condidature)
-        //{
-        //    var candidat = await _context.Candidats.FindAsync(Condidature.CandidatFK);
-        //    if(candidat == null)
-        //        return NotFound();
-
-        //    var offre = await _context.Offres.FindAsync(Condidature.OffreFK);
-        //    if (offre == null)
-        //        return NotFound();
-
-        //    candidat.Condidatures.Add(Condidature);
-
-        //    await _context.SaveChangesAsync();
-
-        //    return candidat;
-
-
-        //}
 
         // DELETE: api/Condidature/DeleteCondidature/5
         [HttpDelete("DeleteCondidature/{idOffre}/{idCandidat}")]
@@ -223,9 +188,5 @@ namespace BackOfficeAPI.Controllers
             return NoContent();
         }
 
-        //private bool CondidatureExists(int id1, int id2)
-        //{
-        //    return _context.Condidatures.Any(e => e.OffreFK == id1 && e.CandidatFK == id2);
-        //}
     }
 }
