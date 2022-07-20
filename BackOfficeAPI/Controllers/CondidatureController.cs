@@ -27,14 +27,14 @@ namespace BackOfficeAPI.Controllers
         }
 
         // GET: api/Condidature/GetAllCondidatureActif
-        [HttpGet("GetAllCondidatureActif")]
-        public async Task<ActionResult<IEnumerable<Condidature>>> GetAllCondidatureActif()
+        [HttpGet("GetAllCondidatureActif/{idOffre}")]
+        public async Task<ActionResult<IEnumerable<Condidature>>> GetAllCondidatureActif(int idOffre)
         {
             List<Condidature> AllCondidatureActif = new List<Condidature>();
             var condidatures = _context.Condidatures.ToList();
             foreach (var condidature in condidatures)
             {
-                if (condidature.Etat == EtatCondidature.Actif)
+                if (condidature.Etat == EtatCondidature.Actif && condidature.OffreFK == idOffre)
                 {
                     AllCondidatureActif.Add(condidature);
                 }
@@ -44,14 +44,14 @@ namespace BackOfficeAPI.Controllers
         }
 
         // GET: api/Condidature/GetAllCondidatureAExaminer
-        [HttpGet("GetAllCondidatureAExaminer")]
-        public async Task<ActionResult<IEnumerable<Condidature>>> GetAllCondidatureAExaminer()
+        [HttpGet("GetAllCondidatureAExaminer/{idOffre}")]
+        public async Task<ActionResult<IEnumerable<Condidature>>> GetAllCondidatureAExaminer(int idOffre)
         {
             List<Condidature> AllCondidatureAExaminer = new List<Condidature>();
             var condidatures = _context.Condidatures.ToList();
             foreach (var condidature in condidatures)
             {
-                if (condidature.Etat == EtatCondidature.AExaminer)
+                if (condidature.Etat == EtatCondidature.AExaminer && condidature.OffreFK == idOffre)
                 {
                     AllCondidatureAExaminer.Add(condidature);
                 }
@@ -61,14 +61,14 @@ namespace BackOfficeAPI.Controllers
         }
 
         // GET: api/Condidature/GetAllCondidatureExaminer
-        [HttpGet("GetAllCondidatureExaminer")]
-        public async Task<ActionResult<IEnumerable<Condidature>>> GetAllCondidatureExaminer()
+        [HttpGet("GetAllCondidatureExaminer/{idOffre}")]
+        public async Task<ActionResult<IEnumerable<Condidature>>> GetAllCondidatureExaminer(int idOffre)
         {
             List<Condidature> AllCondidatureExaminer = new List<Condidature>();
             var condidatures = _context.Condidatures.ToList();
             foreach (var condidature in condidatures)
             {
-                if (condidature.Etat == EtatCondidature.Examine)
+                if (condidature.Etat == EtatCondidature.Examine && condidature.OffreFK == idOffre)
                 {
                     AllCondidatureExaminer.Add(condidature);
                 }
@@ -78,14 +78,14 @@ namespace BackOfficeAPI.Controllers
         }
 
         // GET: api/Condidature/GetAllCondidatureEnCommunication
-        [HttpGet("GetAllCondidatureEnCommunication")]
-        public async Task<ActionResult<IEnumerable<Condidature>>> GetAllCondidatureEnCommunication()
+        [HttpGet("GetAllCondidatureEnCommunication/{idOffre}")]
+        public async Task<ActionResult<IEnumerable<Condidature>>> GetAllCondidatureEnCommunication(int idOffre)
         {
             List<Condidature> AllCondidatureEnCommunication = new List<Condidature>();
             var condidatures = _context.Condidatures.ToList();
             foreach (var condidature in condidatures)
             {
-                if (condidature.Etat == EtatCondidature.EnCommunication)
+                if (condidature.Etat == EtatCondidature.EnCommunication && condidature.OffreFK == idOffre)
                 {
                     AllCondidatureEnCommunication.Add(condidature);
                 }
@@ -95,14 +95,14 @@ namespace BackOfficeAPI.Controllers
         }
 
         // GET: api/Condidature/GetAllCondidatureRecruter
-        [HttpGet("GetAllCondidatureRecruter")]
-        public async Task<ActionResult<IEnumerable<Condidature>>> GetAllCondidatureRecruter()
+        [HttpGet("GetAllCondidatureRecruter/{idOffre}")]
+        public async Task<ActionResult<IEnumerable<Condidature>>> GetAllCondidatureRecruter(int idOffre)
         {
             List<Condidature> AllCondidatureRecruter = new List<Condidature>();
             var condidatures = _context.Condidatures.ToList();
             foreach (var condidature in condidatures)
             {
-                if (condidature.Etat == EtatCondidature.Recrute)
+                if (condidature.Etat == EtatCondidature.Recrute && condidature.OffreFK == idOffre)
                 {
                     AllCondidatureRecruter.Add(condidature);
                 }
@@ -112,14 +112,14 @@ namespace BackOfficeAPI.Controllers
         }
 
         // GET: api/Condidature/GetAllCondidatureNonRetenu
-        [HttpGet("GetAllCondidatureNonRetenu")]
-        public async Task<ActionResult<IEnumerable<Condidature>>> GetAllCondidatureNonRetenu()
+        [HttpGet("GetAllCondidatureNonRetenu/{idOffre}")]
+        public async Task<ActionResult<IEnumerable<Condidature>>> GetAllCondidatureNonRetenu(int idOffre)
         {
             List<Condidature> AllCondidatureNonRetenu = new List<Condidature>();
             var condidatures = _context.Condidatures.ToList();
             foreach (var condidature in condidatures)
             {
-                if (condidature.Etat == EtatCondidature.NonRetenu)
+                if (condidature.Etat == EtatCondidature.NonRetenu && condidature.OffreFK == idOffre)
                 {
                     AllCondidatureNonRetenu.Add(condidature);
                 }
