@@ -230,6 +230,33 @@ namespace BackOfficeAPI.Controllers
 
             return Ok(new Response { Status = "Success", Message = "User created successfully!", DataSet = userDetail });
         }
+
+        [HttpPost]
+        [Route("register-candidat")]
+        public async Task<IActionResult> RegisterCandidat([FromBody] RegisterCandidatModel model)
+        {
+            var userExists = await userManager.FindByNameAsync(model.Email);
+            if (userExists != null)
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
+
+            Candidat candidat = new Candidat()
+            {
+                Email = model.Email,
+                UserName = model.Email,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                Nom = model.Nom,
+                Prenom = model.Prenom,
+                Role = Role.Condidat,
+                Telephone = model.Telephone
+
+            };
+            var result = await userManager.CreateAsync(candidat, model.Password);
+            if (!result.Succeeded)
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+            var userDetail = new RegisterCandidatModel { Nom = candidat.Nom, Prenom = candidat.Prenom, Email = candidat.Email, Role = candidat.Role.ToString(), Telephone = candidat.Telephone };
+
+            return Ok(new Response { Status = "Success", Message = "User created successfully!", DataSet = userDetail });
+        }
     }
 
    

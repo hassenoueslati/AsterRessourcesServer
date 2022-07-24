@@ -18,14 +18,14 @@ namespace BackOfficeAPI.Controllers
         }
 
         // GET: api/Candidats
-        [HttpGet]
+        [HttpGet("GetAllCandidat")]
         public async Task<ActionResult<IEnumerable<Candidat>>> GetCandidats()
         {
             return await _context.Candidats.ToListAsync();
         }
 
         // GET: api/Candidats/5
-        [HttpGet("{id}")]
+        [HttpGet("GetCandidat/{id}")]
         public async Task<ActionResult<Candidat>> GetCandidat(int id)
         {
             var Candidat = await _context.Candidats.FindAsync(id);
@@ -39,7 +39,7 @@ namespace BackOfficeAPI.Controllers
         }
 
         // PUT: api/Candidats/5
-        [HttpPut("{id}")]
+        [HttpPut("UpdateCandidat/{id}")]
         public async Task<IActionResult> UpdateCandidat(int id, Candidat Candidat)
         {
             if (id != Candidat.UserId)
@@ -69,7 +69,7 @@ namespace BackOfficeAPI.Controllers
         }
 
         // POST: api/Candidats
-        [HttpPost]
+        [HttpPost("AddCandidat")]
         public async Task<ActionResult<Candidat>> AddCandidat(Candidat Candidat)
         {
             _context.Candidats.Add(Candidat);
@@ -79,7 +79,7 @@ namespace BackOfficeAPI.Controllers
         }
 
         // DELETE: api/Candidats/5
-        [HttpDelete("{id}")]
+        [HttpDelete("DeleteCandidat/{id}")]
         public async Task<IActionResult> DeleteCandidat(int id)
         {
             var Candidat = await _context.Candidats.FindAsync(id);
