@@ -30,7 +30,6 @@ namespace BackOfficeAPI.Models
         [ForeignKey("Admin")]
         public int? AdminFK { get; set; }
 
-        [JsonIgnore]
         public virtual List<Condidature>? Condidatures { get; set; }
     }
 }
