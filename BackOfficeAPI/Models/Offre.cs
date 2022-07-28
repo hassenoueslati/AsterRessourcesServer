@@ -30,6 +30,6 @@ namespace BackOfficeAPI.Models
         [ForeignKey("Admin")]
         public int? AdminFK { get; set; }
 
-        public virtual List<Condidature>? Condidatures { get; set; }
+        public virtual List<Candidature>? Candidatures { get; set; }
     }
 }

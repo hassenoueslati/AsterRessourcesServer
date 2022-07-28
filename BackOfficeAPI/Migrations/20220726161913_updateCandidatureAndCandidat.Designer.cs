@@ -3,6 +3,7 @@ using System;
 using BackOfficeAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BackOfficeAPI.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20220726161913_updateCandidatureAndCandidat")]
+    partial class updateCandidatureAndCandidat
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,7 +32,7 @@ namespace BackOfficeAPI.Migrations
                     b.Property<int?>("CandidatFK")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("DateCandidature")
+                    b.Property<DateTime?>("DateCondidature")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int?>("Etat")

@@ -64,7 +64,7 @@ namespace BackOfficeAPI.Controllers
             var users = _context.Users.ToList();
             foreach (var user in users)
             {
-                if (user.Role == Role.Condidat)
+                if (user.Role == Role.Candidat)
                 {
                     AllCandidat.Add(user);
                 }
@@ -83,6 +83,26 @@ namespace BackOfficeAPI.Controllers
             {
                 return NotFound();
             }
+
+            return User;
+        }
+
+        // GET: api/User/GetUser/Email@gmail.com
+        [HttpGet("GetUserByEmail/{email}")]
+        public async Task<ActionResult<User>> GetUserByEmail(string email)
+        {
+
+            List<User> AllUser = new List<User>();
+            var users = _context.Users.ToList();
+
+            foreach (var user in users)
+            {
+                if (user.Email == email)
+                {
+                    AllUser.Add(user);
+                }
+            }
+            var User = AllUser[0];
 
             return User;
         }
@@ -117,6 +137,36 @@ namespace BackOfficeAPI.Controllers
             return NoContent();
         }
 
+        // PUT: api/User/UpdateUser/Email@gmail.com
+        [HttpPut("UpdateUserByEmail/{email}")]
+        public async Task<IActionResult> UpdateUserByEmail(string email, User User)
+        {
+            if (email != User.Email)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(User).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UserExists(email))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
         // DELETE: api/User/DeleteUser/5
         [HttpDelete("DeleteUser/{id}")]
         public async Task<IActionResult> DeleteUser(int id)
@@ -137,6 +187,12 @@ namespace BackOfficeAPI.Controllers
         {
             return _context.Users.Any(e => e.UserId == id);
         }
+
+        private bool UserExists(string email)
+        {
+            return _context.Users.Any(e => e.Email == email);
+        }
+
         [HttpPost]
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
@@ -167,13 +223,10 @@ namespace BackOfficeAPI.Controllers
                     token = new JwtSecurityTokenHandler().WriteToken(token),
                     expiration = token.ValidTo,
                     Status = new Response().Status = "Success",
-                    Message = new Response().Message = "",
                     DataSet = new Response().DataSet = userDetail
                 }
                     ) ;
             }
-            //return StatusCode(StatusCodes.Status500InternalServerError, 
-            //    new Response { Status = "Error", Message = "Invalid Email or Password" });
             return Unauthorized(
                new Response { Status = "Error", Message = "Invalid Email or Password" });
 
@@ -246,7 +299,7 @@ namespace BackOfficeAPI.Controllers
                 SecurityStamp = Guid.NewGuid().ToString(),
                 Nom = model.Nom,
                 Prenom = model.Prenom,
-                Role = Role.Condidat,
+                Role = Role.Candidat,
                 Telephone = model.Telephone
 
             };

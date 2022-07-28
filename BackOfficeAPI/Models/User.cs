@@ -7,7 +7,7 @@ namespace BackOfficeAPI.Models
     {
         SuperAdmin = 0,
         Admin = 1,
-        Condidat = 2
+        Candidat = 2
     };
     public class User : IdentityUser
     {
@@ -35,5 +35,11 @@ namespace BackOfficeAPI.Models
         [DataType(DataType.Password)]
         public string? Password { get; set; }
         public Role Role { get; set; } = Role.Admin;
+
+        /// <summary>
+        /// true si l'utilisateur est Connecté
+        /// false si l'utilisateur est Déconnecté
+        /// </summary>
+        public Boolean? Statut { get; set; } = false;
     }
 }
