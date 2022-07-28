@@ -20,7 +20,7 @@ namespace BackOfficeAPI.Models
         
         public List<Proffesion>? Proffesions { get; set; }
         [JsonIgnore]
-        public virtual List<Condidature>? Condidatures { get; set; }
+        public virtual List<Candidature>? Candidatures { get; set; }
         
 
     }

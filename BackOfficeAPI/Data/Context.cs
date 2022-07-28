@@ -11,14 +11,14 @@ namespace BackOfficeAPI.Data
 
         public DbSet<Candidat> Candidats { get; set; }
         public DbSet<Offre> Offres { get; set; }
-        public DbSet<Condidature> Condidatures { get; set; }
+        public DbSet<Candidature> Candidatures { get; set; }
         public DbSet<Admin> Admins { get; set; }
         public DbSet<SuperAdmin> SuperAdmins { get; set; }
         public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Condidature>().HasKey(c => new { c.OffreFK, c.CandidatFK });
+            modelBuilder.Entity<Candidature>().HasKey(c => new { c.OffreFK, c.CandidatFK });
            
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace BackOfficeAPI.Models
 {
-    public enum EtatCondidature
+    public enum EtatCandidature
     {
         Actif = 0,
         AExaminer = 1,
@@ -13,11 +13,11 @@ namespace BackOfficeAPI.Models
         NonRetenu = 5
 
     };
-    public class Condidature
+    public class Candidature
     {
-        public EtatCondidature? Etat { get; set; } = EtatCondidature.Actif;
+        public EtatCandidature? Etat { get; set; } = EtatCandidature.Actif;
         public int? PartinenceProfil { get; set; } = 0;
-        public DateTime? DateCondidature { get; set; } = DateTime.Now;
+        public DateTime? DateCandidature { get; set; } = DateTime.Now;
         public Boolean? ProfileInteressant { get; set; }
 
         public virtual Candidat? Candidat { get; set; }
