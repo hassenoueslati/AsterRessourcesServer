@@ -310,7 +310,37 @@ namespace BackOfficeAPI.Controllers
 
             return Ok(new Response { Status = "Success", Message = "User created successfully!", DataSet = userDetail });
         }
-    }
 
-   
+        [HttpPost]
+        [Route("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordModel model)
+        {
+            var user = await userManager.FindByNameAsync(model.Email);
+            if(user == null)
+                return StatusCode(StatusCodes.Status404NotFound, 
+                    new Response { Status = "Error", Message = "User does not exists!" });
+    
+            if(string.Compare(model.NewPassword,model.ConfirmNewPassword) != 0 )
+                return StatusCode(StatusCodes.Status400BadRequest, 
+                    new Response { Status = "Error", Message = "the new Password and confirm new password does not match !" });
+
+            var result = await userManager.ChangePasswordAsync(user,model.CurrentPassword, model.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                var errors = new  List<string>();
+                
+                foreach(var error in result.Errors)
+                {
+                    errors.Add(error.Description);
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new Response { Status = "Error", Message = string.Join(", ", errors) });
+
+
+            }
+            return Ok(new Response { Status = "Success", Message = "Password successfully changed." });
+        }
+
+    }
 }
