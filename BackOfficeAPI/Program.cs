@@ -1,5 +1,6 @@
 using BackOfficeAPI.Data;
 using BackOfficeAPI.Models;
+using BackOfficeAPI.Services.EmailService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddDbContext<Context>
     (options => options.UseNpgsql(builder.Configuration.GetConnectionString("AsterRessourcesDB"))

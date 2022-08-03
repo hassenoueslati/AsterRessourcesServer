@@ -11,6 +11,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Linq;
+using BackOfficeAPI.Services.EmailService;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace BackOfficeAPI.Controllers
 {
@@ -22,13 +24,17 @@ namespace BackOfficeAPI.Controllers
         private readonly UserManager<User> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly IConfiguration _configuration;
+        private readonly IEmailService _emailService;
 
-        public UserController(Context context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+        public UserController(Context context, UserManager<User> userManager, 
+                              RoleManager<IdentityRole> roleManager,IConfiguration configuration, 
+                              IEmailService emailService)
         {
             this._context = context;
             this.userManager = userManager;
             this.roleManager = roleManager;
             _configuration = configuration;
+            _emailService = emailService;
         }
 
 
@@ -45,8 +51,9 @@ namespace BackOfficeAPI.Controllers
         public async Task<ActionResult<IEnumerable<User>>> GetAdmins()
         {
             List<User> AllAdmin = new List<User>();
-            var users =  _context.Users.ToList();
-            foreach (var user in users) {
+            var users = _context.Users.ToList();
+            foreach (var user in users)
+            {
                 if (user.Role == Role.Admin)
                 {
                     AllAdmin.Add(user);
@@ -217,7 +224,7 @@ namespace BackOfficeAPI.Controllers
                     claims: authClaims,
                     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                     );
-                var userDetail = new RegisterModel { Nom = user.Nom, Prenom = user.Prenom, Email = user.Email, Role= user.Role.ToString() };
+                var userDetail = new RegisterModel { Nom = user.Nom, Prenom = user.Prenom, Email = user.Email, Role = user.Role.ToString() };
                 return Ok(new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
@@ -225,13 +232,13 @@ namespace BackOfficeAPI.Controllers
                     Status = new Response().Status = "Success",
                     DataSet = new Response().DataSet = userDetail
                 }
-                    ) ;
+                    );
             }
             return Unauthorized(
                new Response { Status = "Error", Message = "Invalid Email or Password" });
 
         }
-        
+
         [HttpPost]
         [Route("register-super-admin")]
         public async Task<IActionResult> RegisterSuperAdmin([FromBody] RegisterModel model)
@@ -248,14 +255,14 @@ namespace BackOfficeAPI.Controllers
                 Nom = model.Nom,
                 Prenom = model.Prenom,
                 Role = Role.SuperAdmin
-                
+
             };
             var result = await userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
             var userDetail = new RegisterModel { Nom = user.Nom, Prenom = user.Prenom, Email = user.Email, Role = user.Role.ToString() };
 
-            return Ok(new Response { Status = "Success", Message = "User created successfully!",DataSet= userDetail });
+            return Ok(new Response { Status = "Success", Message = "User created successfully!", DataSet = userDetail });
         }
 
         [HttpPost]
@@ -316,21 +323,21 @@ namespace BackOfficeAPI.Controllers
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordModel model)
         {
             var user = await userManager.FindByNameAsync(model.Email);
-            if(user == null)
-                return StatusCode(StatusCodes.Status404NotFound, 
+            if (user == null)
+                return StatusCode(StatusCodes.Status404NotFound,
                     new Response { Status = "Error", Message = "User does not exists!" });
-    
-            if(string.Compare(model.NewPassword,model.ConfirmNewPassword) != 0 )
-                return StatusCode(StatusCodes.Status400BadRequest, 
+
+            if (string.Compare(model.NewPassword, model.ConfirmNewPassword) != 0)
+                return StatusCode(StatusCodes.Status400BadRequest,
                     new Response { Status = "Error", Message = "the new Password and confirm new password does not match !" });
 
-            var result = await userManager.ChangePasswordAsync(user,model.CurrentPassword, model.NewPassword);
+            var result = await userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
 
             if (!result.Succeeded)
             {
-                var errors = new  List<string>();
-                
-                foreach(var error in result.Errors)
+                var errors = new List<string>();
+
+                foreach (var error in result.Errors)
                 {
                     errors.Add(error.Description);
                 }
@@ -342,5 +349,94 @@ namespace BackOfficeAPI.Controllers
             return Ok(new Response { Status = "Success", Message = "Password successfully changed." });
         }
 
+        [HttpPost("SendEmail")]
+        public async Task<IActionResult> SendEmail(EmailModel model)
+        {
+            await _emailService.SendEmail(model);
+            return Ok(new Response { Status = "Success", Message = "Mail successfully sanded ." });
+        }
+
+        [HttpPost]
+        [Route("forget-password")]
+        public async Task<IActionResult> ForgetPassword(ForgetPasswordModel model)
+        {
+            if (string.IsNullOrEmpty(model.Email))
+                return NotFound();
+            var user = await userManager.FindByNameAsync(model.Email);
+
+            if (user == null)
+                return StatusCode(StatusCodes.Status404NotFound, new Response
+                {
+                    Status = "Error",
+                    Message = "No user associated with email!"
+                });
+            var token = await userManager.GeneratePasswordResetTokenAsync(user);
+            var encodedToken = Encoding.UTF8.GetBytes(token);
+            var validToken = WebEncoders.Base64UrlEncode(encodedToken);
+
+            string url = $"{_configuration["AppUrl"]}/resetPassword/{model.Email}/{validToken}";
+
+            var EmailSanded = new EmailModel
+            {
+                To = model.Email,
+                Subject = "Réinitialisation de mot de passe",
+                Body = $"<h3>Bonjour monsieur {user.Nom} {user.Prenom}, </h3>" +
+                    "<br>" +
+                    $"<h4>Une demande de réinitialisation de mot de passe a été demandée pour votre compte utilisateur {user.Email}, </h4>" +
+                    $"<h4>Pour confirmer cette demande et définir un nouveau mot de passe, veuillez <a href='{url}'>cliquer ci</a>.</h4>" +
+                    "<h4>Si vous avez besoin d'aide, veuillez contacter l'administrateur du site.</h4>" +
+                    "<br>"+
+                    "<h4>Admin</h4>"+
+                    "<h4>info@aster-ressources.ca</h4>"
+            };
+         
+            await _emailService.SendEmail(EmailSanded);
+
+            return Ok(new Response
+            {
+                Status = "Success",
+                Message = "Reset password URL has been sent to the email successfully!"
+            });
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
+        {
+            if (string.IsNullOrEmpty(model.Email))
+                return NotFound();
+            var user = await userManager.FindByNameAsync(model.Email);
+
+            if (user == null)
+                return StatusCode(StatusCodes.Status404NotFound, new Response
+                {
+                    Status = "Error",
+                    Message = "No user associated with email!"
+                });
+            if (model.NewPassword != model.ConfirmPassword)
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new Response { 
+                        Status = "Error", 
+                        Message = "Password doesn't match its confirmation" 
+                    });
+
+            var decodedToken = WebEncoders.Base64UrlDecode(model.Token);
+            string normalToken = Encoding.UTF8.GetString(decodedToken);
+
+            var result = await userManager.ResetPasswordAsync(user, normalToken, model.NewPassword);
+            
+            if (result.Succeeded)
+                return Ok(new Response
+                {
+                    Status = "Success",
+                    Message = "Password has been reset successfully!"
+                });
+           
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                    new Response
+                    {
+                        Status = "Error",
+                        Message = "Something went wrong",
+                    });
+        }
     }
 }
