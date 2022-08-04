@@ -20,7 +20,9 @@ namespace BackOfficeAPI.Models
         public string? Description { get; set; }
         
         public string? Adresse { get; set; }
-        
+
+        public DateTime DateOuverture { get; set; } = DateTime.Now;
+
         public EtatOffre? Etat { get; set; } = EtatOffre.Ouverte;
         
         public List<Proffesion>? Proffesions { get; set; }

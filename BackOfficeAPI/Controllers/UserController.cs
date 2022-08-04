@@ -353,7 +353,7 @@ namespace BackOfficeAPI.Controllers
         public async Task<IActionResult> SendEmail(EmailModel model)
         {
             await _emailService.SendEmail(model);
-            return Ok(new Response { Status = "Success", Message = "Mail successfully sanded ." });
+            return Ok(new Response { Status = "Success", Message = "Mail sent successfully ." });
         }
 
         [HttpPost]
