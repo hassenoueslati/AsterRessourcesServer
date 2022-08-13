@@ -273,7 +273,7 @@ namespace BackOfficeAPI.Controllers
             if (userExists != null)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
 
-            User user = new User()
+            Admin admin = new Admin()
             {
                 Email = model.Email,
                 UserName = model.Email,
@@ -281,12 +281,11 @@ namespace BackOfficeAPI.Controllers
                 Nom = model.Nom,
                 Prenom = model.Prenom,
                 Role = Role.Admin
-
             };
-            var result = await userManager.CreateAsync(user, model.Password);
+            var result = await userManager.CreateAsync(admin, model.Password);
             if (!result.Succeeded)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
-            var userDetail = new RegisterModel { Nom = user.Nom, Prenom = user.Prenom, Email = user.Email, Role = user.Role.ToString() };
+            var userDetail = new RegisterModel { Nom = admin.Nom, Prenom = admin.Prenom, Email = admin.Email, Role = admin.Role.ToString() };
 
             return Ok(new Response { Status = "Success", Message = "User created successfully!", DataSet = userDetail });
         }
@@ -353,7 +352,7 @@ namespace BackOfficeAPI.Controllers
         public async Task<IActionResult> SendEmail(EmailModel model)
         {
             await _emailService.SendEmail(model);
-            return Ok(new Response { Status = "Success", Message = "Mail successfully sanded ." });
+            return Ok(new Response { Status = "Success", Message = "Mail sent successfully ." });
         }
 
         [HttpPost]
