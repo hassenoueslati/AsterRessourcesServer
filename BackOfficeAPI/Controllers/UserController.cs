@@ -373,7 +373,7 @@ namespace BackOfficeAPI.Controllers
             var encodedToken = Encoding.UTF8.GetBytes(token);
             var validToken = WebEncoders.Base64UrlEncode(encodedToken);
 
-            string url = $"{_configuration["AppUrl"]}/resetPassword/{model.Email}/{validToken}";
+            string url = $"{_configuration["AppAdminUrl"]}/resetPassword/{model.Email}/{validToken}";
 
             var EmailSanded = new EmailModel
             {
@@ -389,6 +389,50 @@ namespace BackOfficeAPI.Controllers
                     "<h4>info@aster-ressources.ca</h4>"
             };
          
+            await _emailService.SendEmail(EmailSanded);
+
+            return Ok(new Response
+            {
+                Status = "Success",
+                Message = "Reset password URL has been sent to the email successfully!"
+            });
+        }
+
+
+        [HttpPost]
+        [Route("forget-password-candidat")]
+        public async Task<IActionResult> ForgetPasswordCandidat(ForgetPasswordModel model)
+        {
+            if (string.IsNullOrEmpty(model.Email))
+                return NotFound();
+            var user = await userManager.FindByNameAsync(model.Email);
+
+            if (user == null)
+                return StatusCode(StatusCodes.Status404NotFound, new Response
+                {
+                    Status = "Error",
+                    Message = "No candidat associated with email!"
+                });
+            var token = await userManager.GeneratePasswordResetTokenAsync(user);
+            var encodedToken = Encoding.UTF8.GetBytes(token);
+            var validToken = WebEncoders.Base64UrlEncode(encodedToken);
+
+            string url = $"{_configuration["AppUrl"]}/resetPassword/{model.Email}/{validToken}";
+
+            var EmailSanded = new EmailModel
+            {
+                To = model.Email,
+                Subject = "Réinitialisation de mot de passe",
+                Body = $"<h3>Bonjour monsieur {user.Nom} {user.Prenom}, </h3>" +
+                    "<br>" +
+                    $"<h4>Une demande de réinitialisation de mot de passe a été demandée pour votre compte utilisateur {user.Email}, </h4>" +
+                    $"<h4>Pour confirmer cette demande et définir un nouveau mot de passe, veuillez <a href='{url}'>cliquer ci</a>.</h4>" +
+                    "<h4>Si vous avez besoin d'aide, veuillez contacter l'administrateur du site.</h4>" +
+                    "<br>" +
+                    "<h4>Admin</h4>" +
+                    "<h4>info@aster-ressources.ca</h4>"
+            };
+
             await _emailService.SendEmail(EmailSanded);
 
             return Ok(new Response

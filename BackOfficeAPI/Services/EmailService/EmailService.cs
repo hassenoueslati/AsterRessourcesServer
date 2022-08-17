@@ -23,6 +23,7 @@ namespace BackOfficeAPI.Services.EmailService
             email.Subject = model.Subject;
             email.Body = new TextPart(TextFormat.Html) { Text = "<div>" + model.Body + "</div>" };
             using var smtp = new SmtpClient();
+            smtp.CheckCertificateRevocation = false;
             smtp.Connect(_config.GetSection("EmailHost").Value, 587, SecureSocketOptions.StartTls);
             smtp.Authenticate(_config.GetSection("EmailUsername").Value, _config.GetSection("EmailPassword").Value);
             smtp.Send(email);
