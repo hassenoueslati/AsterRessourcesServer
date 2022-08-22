@@ -13,6 +13,8 @@ using System.Text;
 using System.Linq;
 using BackOfficeAPI.Services.EmailService;
 using Microsoft.AspNetCore.WebUtilities;
+using Google.Apis.Auth;
+using BackOfficeAPI.Data.TokenConfig;
 
 namespace BackOfficeAPI.Controllers
 {
@@ -25,17 +27,20 @@ namespace BackOfficeAPI.Controllers
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly IConfiguration _configuration;
         private readonly IEmailService _emailService;
+        readonly ITokenHandler _tokenHandler;
 
         public UserController(Context context, UserManager<User> userManager, 
                               RoleManager<IdentityRole> roleManager,IConfiguration configuration, 
-                              IEmailService emailService)
+                              IEmailService emailService,
+                              ITokenHandler tokenHandler
+                              )
         {
             this._context = context;
             this.userManager = userManager;
             this.roleManager = roleManager;
             _configuration = configuration;
             _emailService = emailService;
-        }
+            _tokenHandler = tokenHandler;        }
 
 
         // GET: api/User/GetAllUser
@@ -237,6 +242,58 @@ namespace BackOfficeAPI.Controllers
             return Unauthorized(
                new Response { Status = "Error", Message = "Invalid Email or Password" });
 
+        }
+
+        [HttpPost("google-login")]
+        public async Task<IActionResult> GoogleLogin(GoogleLoginModel model)
+        {
+            var settings = new GoogleJsonWebSignature.ValidationSettings()
+            {
+                Audience = new List<string> { _configuration["Google:ClientId"] }
+            };
+
+            var payload = await GoogleJsonWebSignature.ValidateAsync(model.IdToken, settings);
+            var candidatExists = await userManager.FindByNameAsync(payload.Email);
+                if (candidatExists == null)
+                {
+                    Candidat candidat = new()
+                    {
+                        Email = payload.Email,
+                        UserName = payload.Email,
+                        Nom = model.FirstName,
+                        Prenom = model.LastName,
+                        Role = Role.Candidat,
+                        Image = model.PhotoUrl
+
+                    };
+                    var result = await userManager.CreateAsync(candidat);
+                    Token token = _tokenHandler.CreateAccessToken(5, candidat);
+                    var userDetail = new RegisterModel { Nom = candidat.Nom, Prenom = candidat.Prenom, Email = candidat.Email, Role = candidat.Role.ToString() };
+                    return Ok(new
+                        {
+                            token = token.AccessToken,
+                            expiration = token.Expiration,
+                            Status = new Response().Status = "Success",
+                            Message = new Response().Message = "User registered in the website and connected with Google successfully !",
+                            DataSet = new Response().DataSet = userDetail
+                        });
+                }        
+                else
+                {
+                    Token token = _tokenHandler.CreateAccessToken(5, candidatExists);
+
+                    var userDetail = new RegisterModel { Nom = candidatExists.Nom, Prenom = candidatExists.Prenom, Email = candidatExists.Email, Role = candidatExists.Role.ToString() };
+                    return Ok(new
+                    {
+                        token = token.AccessToken,
+                        expiration = token.Expiration,
+                        Status = new Response().Status = "Success",
+                        Message = new Response().Message = "User Connected with Google successfully !",
+                        DataSet = new Response().DataSet = userDetail
+                    }
+                    );
+
+                }           
         }
 
         [HttpPost]
