@@ -15,6 +15,7 @@ using BackOfficeAPI.Services.EmailService;
 using Microsoft.AspNetCore.WebUtilities;
 using Google.Apis.Auth;
 using BackOfficeAPI.Data.TokenConfig;
+using System.Text.Json;
 
 namespace BackOfficeAPI.Controllers
 {
@@ -28,11 +29,13 @@ namespace BackOfficeAPI.Controllers
         private readonly IConfiguration _configuration;
         private readonly IEmailService _emailService;
         readonly ITokenHandler _tokenHandler;
+        readonly HttpClient _httpClient;
 
         public UserController(Context context, UserManager<User> userManager, 
                               RoleManager<IdentityRole> roleManager,IConfiguration configuration, 
                               IEmailService emailService,
-                              ITokenHandler tokenHandler
+                              ITokenHandler tokenHandler,
+                              IHttpClientFactory httpClientFactory
                               )
         {
             this._context = context;
@@ -40,7 +43,9 @@ namespace BackOfficeAPI.Controllers
             this.roleManager = roleManager;
             _configuration = configuration;
             _emailService = emailService;
-            _tokenHandler = tokenHandler;        }
+            _tokenHandler = tokenHandler;
+            _httpClient = httpClientFactory.CreateClient();
+        }
 
 
         // GET: api/User/GetAllUser
@@ -229,6 +234,7 @@ namespace BackOfficeAPI.Controllers
                     claims: authClaims,
                     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                     );
+                user.Statut = true;
                 var userDetail = new RegisterModel { Nom = user.Nom, Prenom = user.Prenom, Email = user.Email, Role = user.Role.ToString() };
                 return Ok(new
                 {
@@ -294,6 +300,67 @@ namespace BackOfficeAPI.Controllers
                     );
 
                 }           
+        }
+
+        [HttpPost("facebook-login")]
+        public async Task<IActionResult> FacebookLogin(FacebookLoginModel model)
+        {
+            string accessTokenResponse = await _httpClient.GetStringAsync($"https://graph.facebook.com/oauth/access_token?client_id={_configuration["Facebook:ClientId"]}&client_secret={_configuration["Facebook:ClientSecret"]}&grant_type=client_credentials");
+            
+            FacebookAccessTokenResponse? facebookAccessTokenResponse = JsonSerializer.Deserialize<FacebookAccessTokenResponse>(accessTokenResponse);
+            
+            string userAccessTokenValidation = await _httpClient.GetStringAsync($"https://graph.facebook.com/debug_token?input_token={model.AuthToken}&access_token={facebookAccessTokenResponse?.AccessToken}");
+
+            FacebookUserAccessTokenValidation validation = JsonSerializer.Deserialize<FacebookUserAccessTokenValidation>(userAccessTokenValidation);
+
+            if (validation.Data.IsValid)
+            {
+                string userInfoResponse = await _httpClient.GetStringAsync($"https://graph.facebook.com/me?fields=email,firstName,lastName,photoUrl&access_token={model.AuthToken}");
+                
+                FacebookUserInfoResponse? userInfo = JsonSerializer.Deserialize<FacebookUserInfoResponse>(userInfoResponse);
+
+                var candidatExists = await userManager.FindByNameAsync(userInfo.Email);
+                if (candidatExists == null)
+                {
+                    Candidat candidat = new()
+                    {
+                        Email = userInfo.Email,
+                        UserName = userInfo.Email,
+                        Nom = userInfo.FirstName,
+                        Prenom = userInfo.LastName,
+                        Role = Role.Candidat,
+                        Image = userInfo.PhotoUrl
+
+                    };
+                    var result = await userManager.CreateAsync(candidat);
+                    Token token = _tokenHandler.CreateAccessToken(5, candidat);
+                    var userDetail = new RegisterModel { Nom = candidat.Nom, Prenom = candidat.Prenom, Email = candidat.Email, Role = candidat.Role.ToString() };
+                    return Ok(new
+                    {
+                        token = token.AccessToken,
+                        expiration = token.Expiration,
+                        Status = new Response().Status = "Success",
+                        Message = new Response().Message = "User registered in the website and connected with Facebook successfully !",
+                        DataSet = new Response().DataSet = userDetail
+                    });
+                }
+                else
+                {
+                    Token token = _tokenHandler.CreateAccessToken(5, candidatExists);
+
+                    var userDetail = new RegisterModel { Nom = candidatExists.Nom, Prenom = candidatExists.Prenom, Email = candidatExists.Email, Role = candidatExists.Role.ToString() };
+                    return Ok(new
+                    {
+                        token = token.AccessToken,
+                        expiration = token.Expiration,
+                        Status = new Response().Status = "Success",
+                        Message = new Response().Message = "User Connected with Facebook successfully !",
+                        DataSet = new Response().DataSet = userDetail
+                    }
+                    );
+
+                }
+            }
         }
 
         [HttpPost]

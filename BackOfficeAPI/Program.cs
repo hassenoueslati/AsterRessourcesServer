@@ -22,6 +22,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<ITokenHandler, BackOfficeAPI.Data.TokenConfig.TokenHandler>();
+builder.Services.AddHttpClient();
 
 builder.Services.AddDbContext<Context>
     (options => options.UseNpgsql(builder.Configuration.GetConnectionString("AsterRessourcesDB"))
