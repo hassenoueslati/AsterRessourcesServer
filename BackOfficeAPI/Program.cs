@@ -1,4 +1,5 @@
 using BackOfficeAPI.Data;
+using BackOfficeAPI.Data.TokenConfig;
 using BackOfficeAPI.Models;
 using BackOfficeAPI.Services.EmailService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -20,6 +21,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<ITokenHandler, BackOfficeAPI.Data.TokenConfig.TokenHandler>();
+builder.Services.AddHttpClient();
 
 builder.Services.AddDbContext<Context>
     (options => options.UseNpgsql(builder.Configuration.GetConnectionString("AsterRessourcesDB"))
@@ -61,6 +64,7 @@ builder.Services.AddAuthentication(options =>
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
         };
     });
+    
 
 var app = builder.Build();
 
