@@ -10,13 +10,11 @@ namespace BackOfficeAPI.Models
         [JsonPropertyName("email")]
         public string Email { get; set; } = string.Empty;
 
-        [JsonPropertyName("firstName")]
+        [JsonPropertyName("first_name")]
         public string FirstName { get; set; } = string.Empty;
         
-        [JsonPropertyName("lastName")]
+        [JsonPropertyName("last_name")]
         public string LastName { get; set; } = string.Empty;
-        
-        [JsonPropertyName("photoUrl")]
-        public string PhotoUrl { get; set; } = string.Empty;
+
     }
 }

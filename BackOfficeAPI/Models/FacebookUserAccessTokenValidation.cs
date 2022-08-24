@@ -11,9 +11,9 @@ namespace BackOfficeAPI.Models
 
     public class FacebookUserAccessTokenValidationData
     {
-        [JsonPropertyName("data.is_valid")]
+        [JsonPropertyName("is_valid")]
         public bool IsValid { get; set; } 
-        [JsonPropertyName("data.user_id")]
+        [JsonPropertyName("user_id")]
         public string UserId { get; set; } = string.Empty;
 
     }
