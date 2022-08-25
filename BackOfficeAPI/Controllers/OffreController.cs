@@ -179,6 +179,125 @@ namespace BackOfficeAPI.Controllers
             return AllOffreEtalagisteDecorateur;
         }
 
+        // GET: api/Offre/GetAllOffreOuverteDate
+        [HttpGet("GetAllOffreOuverteDate")]
+        public async Task<ActionResult<IEnumerable<Offre>>> GetAllOffreOuverteDate()
+        {
+            List<Offre> AllOffreOuverte = new List<Offre>();
+            var offres = _context.Offres.ToList();
+            foreach (var offre in offres)
+            {
+                if (offre.Etat == EtatOffre.Ouverte && (DateTime.Now >= offre.DateOuverture))
+                {
+                    AllOffreOuverte.Add(offre);
+                }
+            }
+
+            return AllOffreOuverte;
+        }
+
+        // GET: api/Offre/GetAllOffreMenuisierOuverte
+        [HttpGet("GetAllOffreMenuisierOuverte")]
+        public async Task<ActionResult<IEnumerable<Offre>>> GetAllOffreMenuisierOuverte()
+        {
+            List<Offre> AllOffreMenuisier = new List<Offre>();
+            var offres = _context.Offres.ToList();
+            foreach (var offre in offres)
+            {
+                if (offre.Proffesions.Contains(Proffesion.Menuisier) && offre.Etat == EtatOffre.Ouverte && (DateTime.Now  >= offre.DateOuverture))
+                {
+                    AllOffreMenuisier.Add(offre);
+                }
+            }
+
+            return AllOffreMenuisier;
+        }
+
+        // GET: api/Offre/GetAllOffreChefCuisineOuverte
+        [HttpGet("GetAllOffreChefCuisineOuverte")]
+        public async Task<ActionResult<IEnumerable<Offre>>> GetAllOffreChefCuisineOuverte()
+        {
+            List<Offre> AllOffreChefCuisine = new List<Offre>();
+            var offres = _context.Offres.ToList();
+            foreach (var offre in offres)
+            {
+                if (offre.Proffesions.Contains(Proffesion.ChefCuisine) && offre.Etat == EtatOffre.Ouverte && (DateTime.Now >= offre.DateOuverture))
+                {
+                    AllOffreChefCuisine.Add(offre);
+                }
+            }
+
+            return AllOffreChefCuisine;
+        }
+
+        // GET: api/Offre/GetAllOffreMachinisteOuverte
+        [HttpGet("GetAllOffreMachinisteOuverte")]
+        public async Task<ActionResult<IEnumerable<Offre>>> GetAllOffreMachinisteOuverte()
+        {
+            List<Offre> AllOffreMachiniste = new List<Offre>();
+            var offres = _context.Offres.ToList();
+            foreach (var offre in offres)
+            {
+                if (offre.Proffesions.Contains(Proffesion.Machiniste) && offre.Etat == EtatOffre.Ouverte && (DateTime.Now >= offre.DateOuverture))
+                {
+                    AllOffreMachiniste.Add(offre);
+                }
+            }
+
+            return AllOffreMachiniste;
+        }
+
+        // GET: api/Offre/GetAllOffreJournalierDeProductionOuverte
+        [HttpGet("GetAllOffreJournalierDeProductionOuverte")]
+        public async Task<ActionResult<IEnumerable<Offre>>> GetAllOffreJournalierDeProductionOuverte()
+        {
+            List<Offre> AllOffreJournalierDeProduction = new List<Offre>();
+            var offres = _context.Offres.ToList();
+            foreach (var offre in offres)
+            {
+                if (offre.Proffesions.Contains(Proffesion.JournalierDeProduction) && offre.Etat == EtatOffre.Ouverte && (DateTime.Now >= offre.DateOuverture))
+                {
+                    AllOffreJournalierDeProduction.Add(offre);
+                }
+            }
+
+            return AllOffreJournalierDeProduction;
+        }
+
+        // GET: api/Offre/GetAllOffreCommisEntrepotOuverte
+        [HttpGet("GetAllOffreCommisEntrepotOuverte")]
+        public async Task<ActionResult<IEnumerable<Offre>>> GetAllOffreCommisEntrepotOuverte()
+        {
+            List<Offre> AllOffreCommisEntrepot = new List<Offre>();
+            var offres = _context.Offres.ToList();
+            foreach (var offre in offres)
+            {
+                if (offre.Proffesions.Contains(Proffesion.CommisEntrepôt) && offre.Etat == EtatOffre.Ouverte && (DateTime.Now >= offre.DateOuverture))
+                {
+                    AllOffreCommisEntrepot.Add(offre);
+                }
+            }
+
+            return AllOffreCommisEntrepot;
+        }
+
+        // GET: api/Offre/GetAllOffreEtalagisteDecorateurOuverte
+        [HttpGet("GetAllOffreEtalagisteDecorateurOuverte")]
+        public async Task<ActionResult<IEnumerable<Offre>>> GetAllOffreEtalagisteDecorateurOuverte()
+        {
+            List<Offre> AllOffreEtalagisteDecorateur = new List<Offre>();
+            var offres = _context.Offres.ToList();
+            foreach (var offre in offres)
+            {
+                if (offre.Proffesions.Contains(Proffesion.EtalagisteDécorateur) && offre.Etat == EtatOffre.Ouverte && (DateTime.Now >= offre.DateOuverture))
+                {
+                    AllOffreEtalagisteDecorateur.Add(offre);
+                }
+            }
+
+            return AllOffreEtalagisteDecorateur;
+        }
+
 
 
 
