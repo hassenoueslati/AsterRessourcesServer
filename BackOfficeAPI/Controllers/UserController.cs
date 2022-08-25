@@ -315,7 +315,7 @@ namespace BackOfficeAPI.Controllers
 
             if (validation.Data.IsValid)
             {
-                string userInfoResponse = await _httpClient.GetStringAsync($"https://graph.facebook.com/me?fields=email,firstName,lastName,photoUrl&access_token={model.AuthToken}");
+                string userInfoResponse = await _httpClient.GetStringAsync($"https://graph.facebook.com/me?fields=email,first_name,last_name&access_token={model.AuthToken}");
                 
                 FacebookUserInfoResponse? userInfo = JsonSerializer.Deserialize<FacebookUserInfoResponse>(userInfoResponse);
 
@@ -329,7 +329,7 @@ namespace BackOfficeAPI.Controllers
                         Nom = userInfo.FirstName,
                         Prenom = userInfo.LastName,
                         Role = Role.Candidat,
-                        Image = userInfo.PhotoUrl
+                        Image = model.PhotoUrl
 
                     };
                     var result = await userManager.CreateAsync(candidat);
@@ -361,6 +361,8 @@ namespace BackOfficeAPI.Controllers
 
                 }
             }
+
+            return Unauthorized();
         }
 
         [HttpPost]
