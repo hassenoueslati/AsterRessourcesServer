@@ -40,7 +40,7 @@ namespace BackOfficeAPI.Controllers
                 }
             }
 
-            return AllOffreOuverte;
+            return AllOffreOuverte.OrderByDescending(x => x.OffreId).ToList();
         }
 
         // GET: api/Offre/GetAllOffreSuspendu
@@ -57,7 +57,7 @@ namespace BackOfficeAPI.Controllers
                 }
             }
 
-            return AllOffreSuspendu;
+            return AllOffreSuspendu.OrderByDescending(x => x.OffreId).ToList();
         }
 
         // GET: api/Offre/GetAllOffreFermer
@@ -74,7 +74,7 @@ namespace BackOfficeAPI.Controllers
                 }
             }
 
-            return AllOffreFermer;
+            return AllOffreFermer.OrderByDescending(x => x.OffreId).ToList();
         }
 
         // GET: api/Offre/GetAllOffreMenuisier
@@ -91,7 +91,7 @@ namespace BackOfficeAPI.Controllers
                 }
             }
 
-            return AllOffreMenuisier;
+            return AllOffreMenuisier.OrderByDescending(x => x.OffreId).ToList();
         }
 
         // GET: api/Offre/GetAllOffreChefCuisine
@@ -108,7 +108,7 @@ namespace BackOfficeAPI.Controllers
                 }
             }
 
-            return AllOffreChefCuisine;
+            return AllOffreChefCuisine.OrderByDescending(x => x.OffreId).ToList();
         }
 
         // GET: api/Offre/GetAllOffreMachiniste
@@ -125,7 +125,7 @@ namespace BackOfficeAPI.Controllers
                 }
             }
 
-            return AllOffreMachiniste;
+            return AllOffreMachiniste.OrderByDescending(x => x.OffreId).ToList();
         }
 
         // GET: api/Offre/GetAllOffreJournalierDeProduction
@@ -142,7 +142,7 @@ namespace BackOfficeAPI.Controllers
                 }
             }
 
-            return AllOffreJournalierDeProduction;
+            return AllOffreJournalierDeProduction.OrderByDescending(x => x.OffreId).ToList();
         }
 
         // GET: api/Offre/GetAllOffreCommisEntrepot
@@ -159,7 +159,7 @@ namespace BackOfficeAPI.Controllers
                 }
             }
 
-            return AllOffreCommisEntrepot;
+            return AllOffreCommisEntrepot.OrderByDescending(x => x.OffreId).ToList();
         }
 
         // GET: api/Offre/GetAllOffreEtalagisteDecorateur
@@ -176,7 +176,7 @@ namespace BackOfficeAPI.Controllers
                 }
             }
 
-            return AllOffreEtalagisteDecorateur;
+            return AllOffreEtalagisteDecorateur.OrderByDescending(x => x.OffreId).ToList();
         }
 
         // GET: api/Offre/GetAllOffreOuverteDate
@@ -193,7 +193,7 @@ namespace BackOfficeAPI.Controllers
                 }
             }
 
-            return AllOffreOuverte;
+            return AllOffreOuverte.OrderByDescending(x => x.OffreId).ToList();
         }
 
         // GET: api/Offre/GetAllOffreMenuisierOuverte
@@ -210,7 +210,7 @@ namespace BackOfficeAPI.Controllers
                 }
             }
 
-            return AllOffreMenuisier;
+            return AllOffreMenuisier.OrderByDescending(x => x.OffreId).ToList();
         }
 
         // GET: api/Offre/GetAllOffreChefCuisineOuverte
@@ -227,7 +227,7 @@ namespace BackOfficeAPI.Controllers
                 }
             }
 
-            return AllOffreChefCuisine;
+            return AllOffreChefCuisine.OrderByDescending(x => x.OffreId).ToList();
         }
 
         // GET: api/Offre/GetAllOffreMachinisteOuverte
@@ -244,7 +244,7 @@ namespace BackOfficeAPI.Controllers
                 }
             }
 
-            return AllOffreMachiniste;
+            return AllOffreMachiniste.OrderByDescending(x => x.OffreId).ToList();
         }
 
         // GET: api/Offre/GetAllOffreJournalierDeProductionOuverte
@@ -261,7 +261,7 @@ namespace BackOfficeAPI.Controllers
                 }
             }
 
-            return AllOffreJournalierDeProduction;
+            return AllOffreJournalierDeProduction.OrderByDescending(x => x.OffreId).ToList();
         }
 
         // GET: api/Offre/GetAllOffreCommisEntrepotOuverte
@@ -278,7 +278,7 @@ namespace BackOfficeAPI.Controllers
                 }
             }
 
-            return AllOffreCommisEntrepot;
+            return AllOffreCommisEntrepot.OrderByDescending(x => x.OffreId).ToList();
         }
 
         // GET: api/Offre/GetAllOffreEtalagisteDecorateurOuverte
@@ -295,7 +295,7 @@ namespace BackOfficeAPI.Controllers
                 }
             }
 
-            return AllOffreEtalagisteDecorateur;
+            return AllOffreEtalagisteDecorateur.OrderByDescending(x => x.OffreId).ToList();
         }
 
 
