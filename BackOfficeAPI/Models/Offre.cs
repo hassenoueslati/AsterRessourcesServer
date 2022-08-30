@@ -35,5 +35,15 @@ namespace BackOfficeAPI.Models
         public int? AdminFK { get; set; }
 
         public virtual List<Candidature>? Candidatures { get; set; }
+        public virtual List<Question>? Questions { get; set; }
+
+    }
+
+    public class Question
+    {
+        public int? QuestionId { get; set; }
+        public string? Libelle { get; set; }
+        public List<string>? Suggestion { get; set; }
+        public bool? EstObligatoire { get; set; }
     }
 }
