@@ -21,6 +21,8 @@ namespace BackOfficeAPI.Models
         
         public string? Adresse { get; set; }
 
+        public int? NombreCandidats { get; set; }
+
         public DateTime DateOuverture { get; set; } = DateTime.Now;
 
         public EtatOffre? Etat { get; set; } = EtatOffre.Ouverte;
