@@ -165,10 +165,15 @@ namespace BackOfficeAPI.Controllers
         [HttpPost("AddCandidature")]
         public async Task<ActionResult<Candidature>> AddCandidature(Candidature Candidature)
         {
+            var candidature = await _context.Candidatures.FindAsync(Candidature.OffreFK, Candidature.CandidatFK);
+            if (candidature != null)
+            {
+                return Ok(new Response { Status = "Error", Message = "Candidature Exist" });
+
+            }
             _context.Candidatures.Add(Candidature);
             await _context.SaveChangesAsync();
-
-            return new JsonResult("Candidature Added successfully !");
+            return Ok(new Response { Status = "Success", Message = "Candidature Added successfully !"});
         }
 
 
