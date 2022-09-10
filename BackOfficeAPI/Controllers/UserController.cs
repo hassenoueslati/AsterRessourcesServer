@@ -27,6 +27,7 @@ namespace BackOfficeAPI.Controllers
         private readonly UserManager<User> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _env;
         private readonly IEmailService _emailService;
         readonly ITokenHandler _tokenHandler;
         readonly HttpClient _httpClient;
@@ -35,7 +36,8 @@ namespace BackOfficeAPI.Controllers
                               RoleManager<IdentityRole> roleManager,IConfiguration configuration, 
                               IEmailService emailService,
                               ITokenHandler tokenHandler,
-                              IHttpClientFactory httpClientFactory
+                              IHttpClientFactory httpClientFactory,
+                              IWebHostEnvironment env
                               )
         {
             this._context = context;
@@ -45,6 +47,7 @@ namespace BackOfficeAPI.Controllers
             _emailService = emailService;
             _tokenHandler = tokenHandler;
             _httpClient = httpClientFactory.CreateClient();
+            _env = env;
         }
 
 
@@ -432,7 +435,8 @@ namespace BackOfficeAPI.Controllers
                 Nom = model.Nom,
                 Prenom = model.Prenom,
                 Role = Role.Candidat,
-                Telephone = model.Telephone
+                Telephone = model.Telephone,
+                Image = model.Image
 
             };
             var result = await userManager.CreateAsync(candidat, model.Password);
@@ -606,6 +610,40 @@ namespace BackOfficeAPI.Controllers
                         Status = "Error",
                         Message = "Something went wrong",
                     });
+        }
+
+        [Route("SaveImage")]
+        [HttpPost]
+        public JsonResult SaveImage()
+        {
+            try
+            {
+                int Max;
+                Max = IDMax() + 1;
+                var httpRequest = Request.Form;
+                var postFile = httpRequest.Files[0];
+                string filename = postFile.FileName;
+                var physicalPath = _env.ContentRootPath+ "/Images/" + Max + filename ;
+
+                using (var stream = new FileStream(physicalPath, FileMode.Create))
+                {
+                    postFile.CopyTo(stream);
+                }
+                return new JsonResult(Max);
+
+            }
+            catch (Exception)
+            {
+                return new JsonResult("Invalid image");
+            }
+        }
+
+        private int IDMax()
+        {
+            var ListUsers = _context.Users.AsQueryable();
+            var User = ListUsers.OrderByDescending(x => x.UserId).FirstOrDefault();
+            var maxID = User != null ? User.UserId : 0;
+            return maxID;
         }
     }
 }
