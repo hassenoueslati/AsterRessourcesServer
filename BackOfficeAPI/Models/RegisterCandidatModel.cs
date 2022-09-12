@@ -20,6 +20,8 @@ namespace BackOfficeAPI.Models
         public string? Password { get; set; }
         [Required(ErrorMessage = "Telephone is required")]
         public int? Telephone { get; set; }
+        [Required(ErrorMessage = "Image is required")]
+        public string? Image { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public string? Role { get; set; }
     }
