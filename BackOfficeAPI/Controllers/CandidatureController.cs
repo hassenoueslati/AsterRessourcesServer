@@ -128,6 +128,24 @@ namespace BackOfficeAPI.Controllers
             return AllCandidatureNonRetenu;
         }
 
+        // GET: api/Candidature/GetAllOffresByCandidat
+        [HttpGet("GetAllCandidaturesByCandidat/{idCandidat}")]
+        public async Task<ActionResult<IEnumerable<Candidature>>> GetAllCandidaturesByCandidat(int idCandidat)
+        {
+            List<Candidature> AllCandidaturesByCandidat = new List<Candidature>();
+            var Candidatures = await _context.Candidatures.ToListAsync();
+            var CandidaturesOrderByDescId = Candidatures.OrderByDescending(x => x.DateCandidature);
+            foreach (var candidature in CandidaturesOrderByDescId)
+            {
+                if (candidature.CandidatFK == idCandidat)
+                {
+                    AllCandidaturesByCandidat.Add(candidature);
+                }
+            }
+
+            return AllCandidaturesByCandidat;
+        }
+
 
         // GET: api/Candidature/GetCandidature/5/2
         [HttpGet("GetCandidature/{idOffre}/{idCandidat}")]
@@ -192,6 +210,7 @@ namespace BackOfficeAPI.Controllers
 
             return NoContent();
         }
+            
 
     }
 }

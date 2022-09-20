@@ -43,7 +43,14 @@ namespace BackOfficeAPI.Models
     {
         public int? QuestionId { get; set; }
         public string? Libelle { get; set; }
-        public List<string>? Suggestion { get; set; }
+        public virtual List<Suggestion>? Suggestions { get; set; }
         public bool? EstObligatoire { get; set; }
+    }
+
+    public class Suggestion
+    {
+        public int? SuggestionId { get; set; }
+
+        public string? Libelle { get; set; }
     }
 }
