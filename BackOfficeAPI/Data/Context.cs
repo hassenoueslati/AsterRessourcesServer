@@ -20,6 +20,10 @@ namespace BackOfficeAPI.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Candidature>().HasKey(c => new { c.OffreFK, c.CandidatFK });
+            modelBuilder.Entity<Offre>().HasOne(a => a.Admin)
+                .WithMany(o => o.Offres)
+                .HasForeignKey(a=> a.AdminFK)
+                .OnDelete(DeleteBehavior.SetNull);
            
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
